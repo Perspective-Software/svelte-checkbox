@@ -3,19 +3,22 @@
   import { sineInOut } from "svelte/easing";
   import { createStyle } from "./utils";
 
+  export let checkedControlled = false;
+  export let checked = false;
+  export let size = '3rem';
+  export let name = '';
+  export let id = '';
+  export let primaryColor = '#242432';
+  export let secondaryColor = '#d8d8ea';
+  export let duration = 900;
+  export let labelId = '';
+
   let self,
     canChange = true,
     changeBg = false,
-    checked = false,
-    size = "3rem",
-    name = "",
-    id = "",
-    labelId = "",
     borderStyle,
-    checkStyle,
-    duration = 900,
-    primaryColor = "#242432",
-    secondaryColor = "#d8d8ea";
+    checkStyle;
+
   const dispatch = createEventDispatcher();
   const animationOptions = {
     to: 100,
@@ -42,6 +45,7 @@
     onChange: style => (borderStyle = style),
     onEnd: () => (canChange = true)
   });
+
   const checkAnimation = createStyle({
     ...animationOptions,
     css: {
@@ -76,7 +80,13 @@
     setProp("--checkbox-color-secondary", secondaryColor);
   });
 
-  export { checked, size, name, id, primaryColor, secondaryColor, duration, labelId };
+  const playAnimation = () => {
+    if ( checkedControlled !== checked) {
+      handleChange();
+    }
+  }
+
+  $: checkedControlled, playAnimation();
 </script>
 
 <style>
@@ -113,10 +123,10 @@
     width: calc(100% - (var(--checkbox-border-width) * 2));
     height: calc(100% - (var(--checkbox-border-width) * 2));
     transform: translate(
-        calc(var(--checkbox-border-width) * -1),
-        var(--checkbox-border-width)
-      )
-      rotate(90deg);
+            calc(var(--checkbox-border-width) * -1),
+            var(--checkbox-border-width)
+    )
+    rotate(90deg);
     stroke: var(--checkbox-color-secondary);
     transition: 0.2s;
     transform-origin: 50% 50%;
@@ -149,9 +159,6 @@
   <svg class="checkbox__svg" preserveAspectRatio="none" viewBox="0 0 100 100">
     <rect class="checkbox__border" rx="15%" />
     <rect class="checkbox__border -active" style={borderStyle} rx="15%" />
-    <path
-      style={checkStyle}
-      class="checkbox__check"
-      d="M 89.5 13 L 46 71 L 28 54" />
+    <path style={checkStyle} class="checkbox__check" d="M 89.5 13 L 46 71 L 28 54" />
   </svg>
 </div>
